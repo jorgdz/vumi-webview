@@ -1,3 +1,7 @@
+export interface OpenWebviewOptions {
+  url: string;
+}
+
 export interface WebViewPluginPlugin {
-  echo(options: { value: string }): Promise<{ value: string }>;
+  openWebview(options: OpenWebviewOptions): Promise<void>;
 }

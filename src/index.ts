@@ -1,10 +1,6 @@
 import { registerPlugin } from '@capacitor/core';
+import { WebViewPluginPlugin } from './definitions';
 
-import type { WebViewPluginPlugin } from './definitions';
+export const WebViewPlugin = registerPlugin<WebViewPluginPlugin>('WebViewPlugin');
 
-const WebViewPlugin = registerPlugin<WebViewPluginPlugin>('WebViewPlugin', {
-  web: () => import('./web').then((m) => new m.WebViewPluginWeb()),
-});
-
-export * from './definitions';
-export { WebViewPlugin };
+export default WebViewPlugin;

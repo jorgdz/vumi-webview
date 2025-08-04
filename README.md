@@ -11,9 +11,36 @@ npx cap sync
 
 ## API
 
-<docgen-index></docgen-index>
+<docgen-index>
+
+* [`openWebview(...)`](#openwebview)
+* [Interfaces](#interfaces)
+
+</docgen-index>
 
 <docgen-api>
-<!-- run docgen to generate docs from the source -->
-<!-- More info: https://github.com/ionic-team/capacitor-docgen -->
+<!--Update the source file JSDoc comments and rerun docgen to update the docs below-->
+
+### openWebview(...)
+
+```typescript
+openWebview(options: OpenWebviewOptions) => Promise<void>
+```
+
+| Param         | Type                                                              |
+| ------------- | ----------------------------------------------------------------- |
+| **`options`** | <code><a href="#openwebviewoptions">OpenWebviewOptions</a></code> |
+
+--------------------
+
+
+### Interfaces
+
+
+#### OpenWebviewOptions
+
+| Prop      | Type                |
+| --------- | ------------------- |
+| **`url`** | <code>string</code> |
+
 </docgen-api>

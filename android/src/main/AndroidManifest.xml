@@ -1,2 +1,14 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.vumi.mobile.plugins.vumiwebview">
+    
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <application>
+        <activity
+            android:name=".TelemedicineActivity"
+            android:exported="true"
+            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen" 
+            android:hardwareAccelerated="true" />
+    </application>
 </manifest>
