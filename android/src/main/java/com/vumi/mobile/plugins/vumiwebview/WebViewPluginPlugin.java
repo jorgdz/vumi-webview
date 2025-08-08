@@ -23,6 +23,8 @@ public class WebViewPluginPlugin extends Plugin {
 
         Intent intent = new Intent(getContext(), TelemedicineActivity.class);
         intent.putExtra("url", url);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
         getActivity().startActivity(intent);
 
         call.resolve();

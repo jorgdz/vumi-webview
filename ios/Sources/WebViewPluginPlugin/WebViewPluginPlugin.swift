@@ -1,23 +1,21 @@
-import Foundation
 import Capacitor
+import WebKit
+import UIKit
 
-/**
- * Please read the Capacitor iOS Plugin Development Guide
- * here: https://capacitorjs.com/docs/plugins/ios
- */
-@objc(WebViewPluginPlugin)
-public class WebViewPluginPlugin: CAPPlugin, CAPBridgedPlugin {
-    public let identifier = "WebViewPluginPlugin"
-    public let jsName = "WebViewPlugin"
-    public let pluginMethods: [CAPPluginMethod] = [
-        CAPPluginMethod(name: "echo", returnType: CAPPluginReturnPromise)
-    ]
-    private let implementation = WebViewPlugin()
+@objc(VumiWebviewPlugin)
+public class VumiWebviewPlugin: CAPPlugin {
+    @objc func openWebview(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            guard let urlString = call.getString("url"), let url = URL(string: urlString) else {
+                call.reject("URL inválida")
+                return
+            }
 
-    @objc func echo(_ call: CAPPluginCall) {
-        let value = call.getString("value") ?? ""
-        call.resolve([
-            "value": implementation.echo(value)
-        ])
+            let webViewController = TelemedicineViewController()
+            webViewController.url = url
+            self.bridge?.viewController?.present(webViewController, animated: true, completion: nil)
+
+            call.resolve()
+        }
     }
 }
