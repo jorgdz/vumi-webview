@@ -3,35 +3,51 @@ import WebKit
 
 class TelemedicineViewController: UIViewController, WKUIDelegate, WKNavigationDelegate {
 
-  var webView: WKWebView!
-  var urlString: String = ""
+    var webView: WKWebView!
+    var urlString: String = ""
 
-  override func viewDidLoad() {
-    super.viewDidLoad()
+    override func viewDidLoad() {
+        super.viewDidLoad()
 
-    let header = UILabel(frame: CGRect(x: 0, y: 40, width: view.frame.width, height: 50))
-    header.text = "Telemedicine Service"
-    header.textAlignment = .center
-    header.backgroundColor = UIColor.systemBlue
-    header.textColor = .white
-    view.addSubview(header)
+        let headerHeight: CGFloat = 50
+        let statusBarHeight: CGFloat = UIApplication.shared.statusBarFrame.height
 
-    let config = WKWebViewConfiguration()
-    config.mediaTypesRequiringUserActionForPlayback = []
-    config.allowsInlineMediaPlayback = true
-    config.websiteDataStore = WKWebsiteDataStore.default()
+        let header = UIView(frame: CGRect(x: 0, y: statusBarHeight, width: view.frame.width, height: headerHeight))
+        header.backgroundColor = UIColor(red: 60/255, green: 84/255, blue: 134/255, alpha: 1.0) // #3C5486
+        view.addSubview(header)
 
-    webView = WKWebView(frame: CGRect(x: 0, y: 90, width: view.frame.width, height: view.frame.height - 90), configuration: config)
-    webView.uiDelegate = self
-    webView.navigationDelegate = self
-    webView.configuration.preferences.javaScriptEnabled = true
-    webView.configuration.websiteDataStore.httpCookieStore
+        let titleLabel = UILabel(frame: CGRect(x: 50, y: 0, width: view.frame.width - 100, height: headerHeight))
+        titleLabel.text = "Telemedicine Service"
+        titleLabel.textAlignment = .center
+        titleLabel.textColor = .white
+        header.addSubview(titleLabel)
 
-    view.addSubview(webView)
+        let backButton = UIButton(frame: CGRect(x: 10, y: 0, width: 40, height: headerHeight))
+        backButton.setTitle("<", for: .normal)
+        backButton.setTitleColor(.white, for: .normal)
+        backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
+        header.addSubview(backButton)
 
-    if let url = URL(string: urlString) {
-        let request = URLRequest(url: url)
-        webView.load(request)
+        let config = WKWebViewConfiguration()
+        config.mediaTypesRequiringUserActionForPlayback = []
+        config.allowsInlineMediaPlayback = true
+        config.websiteDataStore = WKWebsiteDataStore.default()
+
+        let webViewY = statusBarHeight + headerHeight
+        webView = WKWebView(frame: CGRect(x: 0, y: webViewY, width: view.frame.width, height: view.frame.height - webViewY), configuration: config)
+        webView.uiDelegate = self
+        webView.navigationDelegate = self
+        webView.configuration.preferences.javaScriptEnabled = true
+
+        view.addSubview(webView)
+
+        if let url = URL(string: urlString) {
+            let request = URLRequest(url: url)
+            webView.load(request)
+        }
     }
-  }
+
+    @objc func backButtonTapped() {
+        dismiss(animated: true, completion: nil)
+    }
 }
