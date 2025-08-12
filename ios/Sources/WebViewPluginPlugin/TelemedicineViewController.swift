@@ -33,6 +33,13 @@ class TelemedicineViewController: UIViewController, WKUIDelegate, WKNavigationDe
         config.allowsInlineMediaPlayback = true
         config.websiteDataStore = WKWebsiteDataStore.default()
 
+        config.allowsInlineMediaPlayback = true
+        if #available(iOS 10.0, *) {
+            config.mediaTypesRequiringUserActionForPlayback = []
+        } else {
+            config.mediaPlaybackRequiresUserAction = false
+        }
+
         let webViewY = statusBarHeight + headerHeight
         webView = WKWebView(frame: CGRect(x: 0, y: webViewY, width: view.frame.width, height: view.frame.height - webViewY), configuration: config)
         webView.uiDelegate = self
