@@ -47,7 +47,8 @@ public class TelemedicineActivity extends Activity {
         webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
         webView.getSettings().setSupportMultipleWindows(true);
         CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true);
-
+        CookieManager.getInstance().setAcceptCookie(true);
+        
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onPermissionRequest(final PermissionRequest request) {
