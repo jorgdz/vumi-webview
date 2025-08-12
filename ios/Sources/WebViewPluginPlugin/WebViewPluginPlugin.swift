@@ -2,7 +2,14 @@ import Capacitor
 import UIKit
 
 @objc(WebViewPluginPlugin)
-public class WebViewPluginPlugin: CAPPlugin {
+public class WebViewPluginPlugin: CAPPlugin, CAPBridgedPlugin {
+
+    public let identifier = "WebViewPluginPlugin"
+    public let jsName = "WebViewPlugin"
+
+    public let pluginMethods: [CAPPluginMethod] = [
+        CAPPluginMethod(name: "openWebview", returnType: CAPPluginReturnPromise)
+    ]
 
     @objc func openWebview(_ call: CAPPluginCall) {
         guard let url = call.getString("url"), !url.isEmpty else {
