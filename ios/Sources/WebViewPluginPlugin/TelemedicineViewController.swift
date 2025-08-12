@@ -19,8 +19,8 @@ class TelemedicineViewController: UIViewController, WKUIDelegate, WKNavigationDe
     let config = WKWebViewConfiguration()
     config.mediaTypesRequiringUserActionForPlayback = []
     config.allowsInlineMediaPlayback = true
-    webConfiguration.websiteDataStore = WKWebsiteDataStore.default()
-    
+    config.websiteDataStore = WKWebsiteDataStore.default()
+
     webView = WKWebView(frame: CGRect(x: 0, y: 90, width: view.frame.width, height: view.frame.height - 90), configuration: config)
     webView.uiDelegate = self
     webView.navigationDelegate = self
