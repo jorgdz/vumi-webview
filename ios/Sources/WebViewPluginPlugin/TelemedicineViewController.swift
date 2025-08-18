@@ -29,11 +29,10 @@ class TelemedicineViewController: UIViewController, WKUIDelegate, WKNavigationDe
         header.addSubview(backButton)
 
         let config = WKWebViewConfiguration()
-        config.mediaTypesRequiringUserActionForPlayback = []
         config.allowsInlineMediaPlayback = true
+        config.allowsAirPlayForMediaPlayback = true
         config.websiteDataStore = WKWebsiteDataStore.default()
 
-        config.allowsInlineMediaPlayback = true
         if #available(iOS 10.0, *) {
             config.mediaTypesRequiringUserActionForPlayback = []
         } else {
