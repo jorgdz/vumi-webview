@@ -39,6 +39,7 @@ public class TelemedicineActivity extends Activity {
 
         title.setText("Telemedicine Service");
 
+        webView.getSettings().setGeolocationEnabled(true);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setMediaPlaybackRequiresUserGesture(false);
         webView.getSettings().setAllowContentAccess(true);
@@ -55,8 +56,8 @@ public class TelemedicineActivity extends Activity {
             cookieManager.setAcceptThirdPartyCookies(webView, true);
         }
 
-        String customUA = "Mozilla/5.0 (Linux; Android 12; Pixel 5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.78 Mobile Safari/537.36";
-        webView.getSettings().setUserAgentString(customUA);
+        //String customUA = "Mozilla/5.0 (Linux; Android 12; Pixel 5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.78 Mobile Safari/537.36";
+        webView.getSettings().setUserAgentString(webView.getSettings().getUserAgentString().replace("; wv)", ")"));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             WebView.setWebContentsDebuggingEnabled(true);
@@ -72,6 +73,35 @@ public class TelemedicineActivity extends Activity {
         });
 
         webView.setWebViewClient(new WebViewClient());
+        /* webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+
+                String jsPolyfill = "(function() {" +
+                    " const originalGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);" +
+                    " let currentStream = null;" +
+                    " navigator.mediaDevices.getUserMedia = async function(constraints) {" +
+                    "   try {" +
+                    "     if (currentStream) {" +
+                    "       currentStream.getTracks().forEach(track => {" +
+                    "         try { track.stop(); } catch (e) { console.warn('Error al detener track:', e); }" +
+                    "       });" +
+                    "       currentStream = null;" +
+                    "     }" +
+                    "     const stream = await originalGetUserMedia(constraints);" +
+                    "     currentStream = stream;" +
+                    "     return stream;" +
+                    "   } catch (err) {" +
+                    "     console.error('Error en getUserMedia polyfill:', err);" +
+                    "     throw err;" +
+                    "   }" +
+                    " };" +
+                    "})();";
+
+                view.evaluateJavascript(jsPolyfill, null);
+            }
+        }); */
 
         if (hasPermissions()) {
             loadUrlWithDelay();

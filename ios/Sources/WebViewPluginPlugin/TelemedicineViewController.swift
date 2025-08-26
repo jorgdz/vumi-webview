@@ -9,6 +9,8 @@ class TelemedicineViewController: UIViewController, WKUIDelegate, WKNavigationDe
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        //let contentController = WKUserContentController()
+
         let headerHeight: CGFloat = 50
         let statusBarHeight: CGFloat = UIApplication.shared.statusBarFrame.height
 
@@ -28,7 +30,34 @@ class TelemedicineViewController: UIViewController, WKUIDelegate, WKNavigationDe
         backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
         header.addSubview(backButton)
 
+        let jsPolyfill = """
+        (function() {
+            const originalGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
+            let currentStream = null;
+            navigator.mediaDevices.getUserMedia = async function(constraints) {
+                try {
+                    if (currentStream) {
+                        currentStream.getTracks().forEach(track => {
+                            try { track.stop(); } catch (e) { console.warn("Error al detener track:", e); }
+                        });
+                        currentStream = null;
+                    }
+                    const stream = await originalGetUserMedia(constraints);
+                    currentStream = stream;
+                    return stream;
+                } catch (err) {
+                    console.error("Error en getUserMedia polyfill:", err);
+                    throw err;
+                }
+            };
+        })();
+        """
+        
+        /* let userScript = WKUserScript(source: jsPolyfill, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
+        contentController.addUserScript(userScript) */
+
         let config = WKWebViewConfiguration()
+        //config.userContentController = contentController
         config.allowsInlineMediaPlayback = true
         config.allowsAirPlayForMediaPlayback = true
         config.websiteDataStore = WKWebsiteDataStore.default()
