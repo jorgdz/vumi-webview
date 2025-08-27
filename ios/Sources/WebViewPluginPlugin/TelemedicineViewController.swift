@@ -1,15 +1,50 @@
-import UIKit
+import Foundation
 import WebKit
+import UIKit
 
-class TelemedicineViewController: UIViewController, WKUIDelegate, WKNavigationDelegate {
+class TelemedicineViewController: UIViewController {
 
-    var webView: WKWebView!
-    var urlString: String = ""
+    private var webView: WKWebView!
+    private var url: String?
+    private var userAgent: String?
+    private var allowJavaScript = true
+    private var allowGeolocation = true
+    private var allowMediaPlayback = true
+    private var debugEnabled = false
+    private var webviewTitle = "Video WebView"
+    
+    public func configure(
+        url: String,
+        userAgent: String?,
+        allowJavaScript: Bool,
+        allowGeolocation: Bool,
+        allowMediaPlayback: Bool,
+        debugEnabled: Bool,
+        title: String
+    ) {
+        self.url = url
+        self.userAgent = userAgent
+        self.allowJavaScript = allowJavaScript
+        self.allowGeolocation = allowGeolocation
+        self.allowMediaPlayback = allowMediaPlayback
+        self.debugEnabled = debugEnabled
+        self.webviewTitle = title
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        //let contentController = WKUserContentController()
+        setupUI()
+        setupWebView()
+        
+        if let urlString = url, let url = URL(string: urlString) {
+            let request = URLRequest(url: url)
+            webView.load(request)
+        }
+    }
+
+    private func setupUI() {
+        title = webviewTitle
 
         let headerHeight: CGFloat = 50
         let statusBarHeight: CGFloat = UIApplication.shared.statusBarFrame.height
@@ -19,7 +54,7 @@ class TelemedicineViewController: UIViewController, WKUIDelegate, WKNavigationDe
         view.addSubview(header)
 
         let titleLabel = UILabel(frame: CGRect(x: 50, y: 0, width: view.frame.width - 100, height: headerHeight))
-        titleLabel.text = "Telemedicine Service"
+        titleLabel.text = title
         titleLabel.textAlignment = .center
         titleLabel.textColor = .white
         header.addSubview(titleLabel)
@@ -29,61 +64,118 @@ class TelemedicineViewController: UIViewController, WKUIDelegate, WKNavigationDe
         backButton.setTitleColor(.white, for: .normal)
         backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
         header.addSubview(backButton)
+    }
 
-        let jsPolyfill = """
-        (function() {
-            const originalGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
-            let currentStream = null;
-            navigator.mediaDevices.getUserMedia = async function(constraints) {
-                try {
-                    if (currentStream) {
-                        currentStream.getTracks().forEach(track => {
-                            try { track.stop(); } catch (e) { console.warn("Error al detener track:", e); }
-                        });
-                        currentStream = null;
-                    }
-                    const stream = await originalGetUserMedia(constraints);
-                    currentStream = stream;
-                    return stream;
-                } catch (err) {
-                    console.error("Error en getUserMedia polyfill:", err);
-                    throw err;
-                }
-            };
-        })();
-        """
-        
-        /* let userScript = WKUserScript(source: jsPolyfill, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
-        contentController.addUserScript(userScript) */
-
+    private func setupWebView() {
         let config = WKWebViewConfiguration()
-        //config.userContentController = contentController
-        config.allowsInlineMediaPlayback = true
-        config.allowsAirPlayForMediaPlayback = true
-        config.websiteDataStore = WKWebsiteDataStore.default()
+        
+        // Configurar preferencias
+        let preferences = WKWebpagePreferences()
+        preferences.allowsContentJavaScript = allowJavaScript
+        config.defaultWebpagePreferences = preferences
 
-        if #available(iOS 10.0, *) {
-            config.mediaTypesRequiringUserActionForPlayback = []
-        } else {
-            config.mediaPlaybackRequiresUserAction = false
+        // Configurar para videollamadas (basado en Air Doctor)
+        config.allowsInlineMediaPlayback = true
+        config.mediaTypesRequiringUserActionForPlayback = allowMediaPlayback ? [] : .all
+        
+        // Configurar geolocalización
+        if allowGeolocation {
+            config.preferences.setValue(true, forKey: "allowFileAccessFromFileURLs")
         }
 
-        let webViewY = statusBarHeight + headerHeight
-        webView = WKWebView(frame: CGRect(x: 0, y: webViewY, width: view.frame.width, height: view.frame.height - webViewY), configuration: config)
-        webView.uiDelegate = self
-        webView.customUserAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1"
+        // Obtener opciones adicionales de UserDefaults
+        let allowZoom = UserDefaults.standard.bool(forKey: "VideoWebview_allowZoom")
+        if !allowZoom {
+            let source = """
+                var meta = document.createElement('meta');
+                meta.name = 'viewport';
+                meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+                var head = document.getElementsByTagName('head')[0];
+                head.appendChild(meta);
+            """
+            let script = WKUserScript(source: source, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
+            config.userContentController.addUserScript(script)
+        }
+
+        webView = WKWebView(frame: .zero, configuration: config)
+        webView.translatesAutoresizingMaskIntoConstraints = false
         webView.navigationDelegate = self
-        webView.configuration.preferences.javaScriptEnabled = true
+        webView.uiDelegate = self
+
+        // User Agent personalizado
+        if let userAgent = userAgent {
+            webView.customUserAgent = userAgent
+        }
+
+        // Debug
+        if debugEnabled && #available(iOS 16.4, *) {
+            webView.isInspectable = true
+        }
 
         view.addSubview(webView)
-
-        if let url = URL(string: urlString) {
-            let request = URLRequest(url: url)
-            webView.load(request)
-        }
+        
+        NSLayoutConstraint.activate([
+            webView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            webView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            webView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
     }
 
     @objc func backButtonTapped() {
         dismiss(animated: true, completion: nil)
+    }
+}
+
+// MARK: - WKNavigationDelegate
+extension VideoWebViewController: WKNavigationDelegate {
+    public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+        guard let url = navigationAction.request.url else {
+            decisionHandler(.allow)
+            return
+        }
+
+        // Manejar esquemas especiales
+        let scheme = url.scheme?.lowercased()
+        if scheme == "tel" || scheme == "mailto" || scheme == "whatsapp" {
+            if UIApplication.shared.canOpenURL(url) {
+                UIApplication.shared.open(url)
+                decisionHandler(.cancel)
+                return
+            }
+        }
+
+        decisionHandler(.allow)
+    }
+}
+
+// MARK: - WKUIDelegate
+extension VideoWebViewController: WKUIDelegate {
+    public func webView(_ webView: WKWebView, requestMediaCapturePermissionFor origin: WKSecurityOrigin, initiatedByFrame frame: WKFrameInfo, type: WKMediaCaptureType, decisionHandler: @escaping (WKPermissionDecision) -> Void) {
+        // Otorgar permisos automáticamente si la app tiene los permisos del sistema
+        decisionHandler(.grant)
+    }
+
+    public func webView(_ webView: WKWebView, requestDeviceOrientationAndMotionPermissionFor origin: WKSecurityOrigin, initiatedByFrame frame: WKFrameInfo, decisionHandler: @escaping (WKPermissionDecision) -> Void) {
+        decisionHandler(.grant)
+    }
+
+    public func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
+        let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
+            completionHandler()
+        })
+        present(alert, animated: true)
+    }
+
+    public func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Void) {
+        let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
+            completionHandler(true)
+        })
+        alert.addAction(UIAlertAction(title: "Cancelar", style: .cancel) { _ in
+            completionHandler(false)
+        })
+        present(alert, animated: true)
     }
 }

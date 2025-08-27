@@ -15,7 +15,7 @@
         <activity
             android:name=".TelemedicineActivity"
             android:exported="true"
-            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen" 
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:hardwareAccelerated="true" />
     </application>
 </manifest>
