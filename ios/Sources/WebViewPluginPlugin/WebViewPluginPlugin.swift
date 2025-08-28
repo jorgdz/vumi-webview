@@ -58,7 +58,7 @@ public class WebViewPluginPlugin: CAPPlugin, CAPBridgedPlugin {
         }
     }
 
-    @objc func checkPermissions(_ call: CAPPluginCall) {
+    @objc public override func checkPermissions(_ call: CAPPluginCall) {
         let cameraStatus = AVCaptureDevice.authorizationStatus(for: .video)
         let microphoneStatus = AVCaptureDevice.authorizationStatus(for: .audio)
 
@@ -70,7 +70,7 @@ public class WebViewPluginPlugin: CAPPlugin, CAPBridgedPlugin {
         call.resolve(result)
     }
 
-    @objc func requestPermissions(_ call: CAPPluginCall) {
+    @objc public override func requestPermissions(_ call: CAPPluginCall) {
         let group = DispatchGroup()
         var cameraResult = "denied"
         var microphoneResult = "denied"

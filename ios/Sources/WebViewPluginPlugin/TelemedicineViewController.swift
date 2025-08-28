@@ -108,8 +108,10 @@ class TelemedicineViewController: UIViewController {
         }
 
         // Debug
-        if debugEnabled && #available(iOS 16.4, *) {
-            webView.isInspectable = true
+        if debugEnabled {
+            if #available(iOS 16.4, *) {
+                webView.isInspectable = true
+            }
         }
 
         view.addSubview(webView)
@@ -151,11 +153,31 @@ extension TelemedicineViewController: WKNavigationDelegate {
 
 // MARK: - WKUIDelegate
 extension TelemedicineViewController: WKUIDelegate {
+    @available(iOS 15.0, *)
     public func webView(_ webView: WKWebView, requestMediaCapturePermissionFor origin: WKSecurityOrigin, initiatedByFrame frame: WKFrameInfo, type: WKMediaCaptureType, decisionHandler: @escaping (WKPermissionDecision) -> Void) {
         // Otorgar permisos automáticamente si la app tiene los permisos del sistema
         decisionHandler(.grant)
     }
 
+    // Fallback para iOS 13-14
+    public func webView(_ webView: WKWebView, runJavaScriptTextInputPanelWithPrompt prompt: String, defaultText: String?, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (String?) -> Void) {
+        let alert = UIAlertController(title: nil, message: prompt, preferredStyle: .alert)
+
+        alert.addTextField { textField in
+            textField.text = defaultText
+        }
+
+        alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
+            completionHandler(alert.textFields?.first?.text)
+        })
+
+        alert.addAction(UIAlertAction(title: "Cancelar", style: .cancel) { _ in
+            completionHandler(nil)
+        })
+        present(alert, animated: true)
+    }
+
+    @available(iOS 15.0, *)
     public func webView(_ webView: WKWebView, requestDeviceOrientationAndMotionPermissionFor origin: WKSecurityOrigin, initiatedByFrame frame: WKFrameInfo, decisionHandler: @escaping (WKPermissionDecision) -> Void) {
         decisionHandler(.grant)
     }
