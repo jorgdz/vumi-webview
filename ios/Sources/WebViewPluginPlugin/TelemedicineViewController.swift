@@ -128,7 +128,7 @@ class TelemedicineViewController: UIViewController {
 }
 
 // MARK: - WKNavigationDelegate
-extension VideoWebViewController: WKNavigationDelegate {
+extension TelemedicineViewController: WKNavigationDelegate {
     public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         guard let url = navigationAction.request.url else {
             decisionHandler(.allow)
@@ -150,7 +150,7 @@ extension VideoWebViewController: WKNavigationDelegate {
 }
 
 // MARK: - WKUIDelegate
-extension VideoWebViewController: WKUIDelegate {
+extension TelemedicineViewController: WKUIDelegate {
     public func webView(_ webView: WKWebView, requestMediaCapturePermissionFor origin: WKSecurityOrigin, initiatedByFrame frame: WKFrameInfo, type: WKMediaCaptureType, decisionHandler: @escaping (WKPermissionDecision) -> Void) {
         // Otorgar permisos automáticamente si la app tiene los permisos del sistema
         decisionHandler(.grant)
