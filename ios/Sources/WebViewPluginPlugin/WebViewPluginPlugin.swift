@@ -4,7 +4,7 @@ import WebKit
 import AVFoundation
 
 @objc(WebViewPluginPlugin)
-public class WebViewPluginPlugin: CAPPlugin {
+public class WebViewPluginPlugin: CAPPlugin, CAPBridgedPlugin {
 
     public let identifier = "WebViewPluginPlugin"
     public let jsName = "WebViewPlugin"
