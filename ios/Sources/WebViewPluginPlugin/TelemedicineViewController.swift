@@ -53,15 +53,26 @@ class TelemedicineViewController: UIViewController {
         header.backgroundColor = UIColor(red: 60/255, green: 84/255, blue: 134/255, alpha: 1.0) // #3C5486
         view.addSubview(header)
 
+        // 🔹 Título
         let titleLabel = UILabel(frame: CGRect(x: 50, y: 0, width: view.frame.width - 100, height: headerHeight))
         titleLabel.text = title
         titleLabel.textAlignment = .center
-        titleLabel.textColor = .white
+        titleLabel.textColor = UIColor.white
+        titleLabel.backgroundColor = .clear
+        titleLabel.layer.shadowColor = UIColor.clear.cgColor
+        titleLabel.layer.shadowOpacity = 0
+        titleLabel.layer.shadowOffset = .zero
+        titleLabel.layer.shadowRadius = 0
         header.addSubview(titleLabel)
 
+        // 🔹 Botón de regreso
         let backButton = UIButton(frame: CGRect(x: 10, y: 0, width: 40, height: headerHeight))
-        backButton.setTitle("<", for: .normal)
+        let backImage = UIImage(systemName: "chevron.left")?.withRenderingMode(.alwaysTemplate)
+        backButton.setImage(backImage, for: .normal)
+        backButton.tintColor = .white
         backButton.setTitleColor(.white, for: .normal)
+        backButton.backgroundColor = .clear
+        backButton.adjustsImageWhenHighlighted = false
         backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
         header.addSubview(backButton)
     }
@@ -73,6 +84,19 @@ class TelemedicineViewController: UIViewController {
         let preferences = WKWebpagePreferences()
         preferences.allowsContentJavaScript = allowJavaScript
         config.defaultWebpagePreferences = preferences
+
+        //if let urlString = url, urlString.contains("air-dr") {
+            if let polyfillUrl = URL(string: "https://webrtc.github.io/adapter/adapter-latest.js"),
+            let polyfillSource = try? String(contentsOf: polyfillUrl) {
+                let polyfillScript = WKUserScript(
+                    source: polyfillSource,
+                    injectionTime: .atDocumentStart,
+                    forMainFrameOnly: false
+                )
+                config.userContentController.addUserScript(polyfillScript)
+            }
+        //}
+
 
         // Configurar para videollamadas (basado en Air Doctor)
         config.allowsInlineMediaPlayback = true

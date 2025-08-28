@@ -15,8 +15,8 @@ npx cap sync
 
 * [`openWebview(...)`](#openwebview)
 * [`closeVideoWebview()`](#closevideowebview)
-* [`checkPermissions()`](#checkpermissions)
-* [`requestPermissions()`](#requestpermissions)
+* [`checkWebViewPermissions()`](#checkwebviewpermissions)
+* [`requestWebViewPermissions()`](#requestwebviewpermissions)
 * [`setWebviewOptions(...)`](#setwebviewoptions)
 * [Interfaces](#interfaces)
 * [Type Aliases](#type-aliases)
@@ -48,10 +48,10 @@ closeVideoWebview() => Promise<void>
 --------------------
 
 
-### checkPermissions()
+### checkWebViewPermissions()
 
 ```typescript
-checkPermissions() => Promise<PermissionStatus>
+checkWebViewPermissions() => Promise<PermissionStatus>
 ```
 
 **Returns:** <code>Promise&lt;<a href="#permissionstatus">PermissionStatus</a>&gt;</code>
@@ -59,10 +59,10 @@ checkPermissions() => Promise<PermissionStatus>
 --------------------
 
 
-### requestPermissions()
+### requestWebViewPermissions()
 
 ```typescript
-requestPermissions() => Promise<PermissionStatus>
+requestWebViewPermissions() => Promise<PermissionStatus>
 ```
 
 **Returns:** <code>Promise&lt;<a href="#permissionstatus">PermissionStatus</a>&gt;</code>
