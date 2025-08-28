@@ -1,8 +1,8 @@
 export interface WebViewPluginPlugin {
   openWebview(options: OpenVideoWebviewOptions): Promise<void>;
   closeVideoWebview(): Promise<void>;
-  checkPermissions(): Promise<PermissionStatus>;
-  requestPermissions(): Promise<PermissionStatus>;
+  checkWebViewPermissions(): Promise<PermissionStatus>;
+  requestWebViewPermissions(): Promise<PermissionStatus>;
   setWebviewOptions(options: WebviewOptions): Promise<void>;
 }
 

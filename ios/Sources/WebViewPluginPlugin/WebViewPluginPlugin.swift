@@ -4,13 +4,14 @@ import WebKit
 import AVFoundation
 
 @objc(WebViewPluginPlugin)
-public class WebViewPluginPlugin: CAPPlugin, CAPBridgedPlugin {
+public class WebViewPluginPlugin: CAPPlugin {
 
     public let identifier = "WebViewPluginPlugin"
     public let jsName = "WebViewPlugin"
 
     public let pluginMethods: [CAPPluginMethod] = [
-        CAPPluginMethod(name: "openWebview", returnType: CAPPluginReturnPromise)
+        CAPPluginMethod(name: "openWebview", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "requestWebViewPermissions", returnType: CAPPluginReturnPromise)
     ]
 
     private var webViewNavigationController: UINavigationController?
@@ -58,7 +59,7 @@ public class WebViewPluginPlugin: CAPPlugin, CAPBridgedPlugin {
         }
     }
 
-    @objc public override func checkPermissions(_ call: CAPPluginCall) {
+    @objc func checkWebViewPermissions(_ call: CAPPluginCall) {
         let cameraStatus = AVCaptureDevice.authorizationStatus(for: .video)
         let microphoneStatus = AVCaptureDevice.authorizationStatus(for: .audio)
 
@@ -70,7 +71,7 @@ public class WebViewPluginPlugin: CAPPlugin, CAPBridgedPlugin {
         call.resolve(result)
     }
 
-    @objc public override func requestPermissions(_ call: CAPPluginCall) {
+    @objc func requestWebViewPermissions(_ call: CAPPluginCall) {
         let group = DispatchGroup()
         var cameraResult = "denied"
         var microphoneResult = "denied"

@@ -60,7 +60,7 @@ public class WebViewPluginPlugin extends Plugin {
     }
 
     @PluginMethod
-    public void checkPermissions(PluginCall call) {
+    public void checkWebViewPermissions(PluginCall call) {
         JSObject result = new JSObject();
         result.put("camera", getPermissionState(Manifest.permission.CAMERA));
         result.put("microphone", getPermissionState(Manifest.permission.RECORD_AUDIO));
@@ -68,7 +68,7 @@ public class WebViewPluginPlugin extends Plugin {
     }
 
     @PluginMethod
-    public void requestPermissions(PluginCall call) {
+    public void requestWebViewPermissions(PluginCall call) {
         String[] permissions = {
             Manifest.permission.CAMERA,
             Manifest.permission.RECORD_AUDIO
