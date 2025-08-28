@@ -59,10 +59,9 @@ class TelemedicineViewController: UIViewController {
         titleLabel.textColor = .white
         header.addSubview(titleLabel)
 
-        let backButton = UIButton(frame: CGRect(x: 10, y: 0, width: 40, height: headerHeight))
+        let backButton = UIButton(frame: CGRect(x: 10, y: 0, width: 40, height: headerHeight), target: self, action: #selector(backButtonTapped))
         backButton.setTitle("<", for: .normal)
         backButton.setTitleColor(.white, for: .normal)
-        backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
         header.addSubview(backButton)
     }
 
