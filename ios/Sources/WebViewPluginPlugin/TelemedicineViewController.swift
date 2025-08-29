@@ -45,41 +45,18 @@ class TelemedicineViewController: UIViewController {
 
     private func setupUI() {
         title = webviewTitle
+        view.backgroundColor = .systemBackground
 
-        let headerHeight: CGFloat = 50
-        let statusBarHeight: CGFloat = UIApplication.shared.statusBarFrame.height
+        // Configurar barra de navegación
+        navigationItem.leftBarButtonItem = UIBarButtonItem(
+            barButtonSystemItem: .cancel,
+            target: self,
+            action: #selector(closeWebView)
+        )
 
-        let header = UIView(frame: CGRect(x: 0, y: statusBarHeight, width: view.frame.width, height: headerHeight))
-        header.backgroundColor = UIColor(red: 60/255, green: 84/255, blue: 134/255, alpha: 1.0) // #3C5486
-        view.addSubview(header)
-
-        // 🔹 Título
-        let titleLabel = UILabel(frame: CGRect(x: 50, y: 0, width: view.frame.width - 100, height: headerHeight))
-        
-        if #available(iOS 13.0, *) {
-            titleLabel.overrideUserInterfaceStyle = .light
+        if let colorString = toolbarColor, let color = UIColor(hex: colorString) {
+            navigationController?.navigationBar.backgroundColor = color
         }
-
-        titleLabel.text = title
-        titleLabel.textAlignment = .center
-        titleLabel.textColor = UIColor.white
-        titleLabel.backgroundColor = .clear
-        titleLabel.layer.shadowColor = UIColor.clear.cgColor
-        titleLabel.layer.shadowOpacity = 0
-        titleLabel.layer.shadowOffset = .zero
-        titleLabel.layer.shadowRadius = 0
-        header.addSubview(titleLabel)
-
-        // 🔹 Botón de regreso
-        let backButton = UIButton(frame: CGRect(x: 10, y: 0, width: 40, height: headerHeight))
-        let backImage = UIImage(systemName: "chevron.left")?.withRenderingMode(.alwaysTemplate)
-        backButton.setImage(backImage, for: .normal)
-        backButton.tintColor = .white
-        backButton.setTitleColor(.white, for: .normal)
-        backButton.backgroundColor = .clear
-        backButton.adjustsImageWhenHighlighted = false
-        backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
-        header.addSubview(backButton)
     }
 
     private func setupWebView() {
@@ -154,7 +131,7 @@ class TelemedicineViewController: UIViewController {
         ])
     }
 
-    @objc private func backButtonTapped() {
+    @objc private func closeWebView() {
         dismiss(animated: true)
     }
 }
