@@ -12,7 +12,6 @@ class TelemedicineViewController: UIViewController {
     private var allowMediaPlayback = true
     private var debugEnabled = false
     private var webviewTitle = "Video WebView"
-    private var toolbarColor = "#3C5486"
 
     public func configure(
         url: String,
@@ -55,9 +54,8 @@ class TelemedicineViewController: UIViewController {
             action: #selector(closeWebView)
         )
 
-        if let colorString = toolbarColor, let color = UIColor(hex: colorString) {
-            navigationController?.navigationBar.backgroundColor = color
-        }
+        let color = UIColor(red: 60/255, green: 84/255, blue: 134/255, alpha: 1.0)
+        navigationController?.navigationBar.backgroundColor = color
     }
 
     private func setupWebView() {
