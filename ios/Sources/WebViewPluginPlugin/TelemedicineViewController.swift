@@ -55,6 +55,11 @@ class TelemedicineViewController: UIViewController {
 
         // 🔹 Título
         let titleLabel = UILabel(frame: CGRect(x: 50, y: 0, width: view.frame.width - 100, height: headerHeight))
+        
+        if #available(iOS 13.0, *) {
+            titleLabel.overrideUserInterfaceStyle = .light
+        }
+
         titleLabel.text = title
         titleLabel.textAlignment = .center
         titleLabel.textColor = UIColor.white
@@ -149,7 +154,7 @@ class TelemedicineViewController: UIViewController {
         ])
     }
 
-    @objc func backButtonTapped() {
+    @objc private func backButtonTapped() {
         dismiss(animated: true)
     }
 }
