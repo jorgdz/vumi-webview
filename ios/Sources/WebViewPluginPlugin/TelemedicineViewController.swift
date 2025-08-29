@@ -12,7 +12,8 @@ class TelemedicineViewController: UIViewController {
     private var allowMediaPlayback = true
     private var debugEnabled = false
     private var webviewTitle = "Video WebView"
-    
+    private var toolbarColor = "#3C5486"
+
     public func configure(
         url: String,
         userAgent: String?,
