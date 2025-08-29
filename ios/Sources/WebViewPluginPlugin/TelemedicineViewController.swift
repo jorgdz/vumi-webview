@@ -47,15 +47,22 @@ class TelemedicineViewController: UIViewController {
         title = webviewTitle
         view.backgroundColor = .systemBackground
 
-        // Configurar barra de navegación
+        let color = UIColor(red: 60/255, green: 84/255, blue: 134/255, alpha: 1.0)
+
+        if let navBar = navigationController?.navigationBar {
+            navBar.barTintColor = color
+            navBar.backgroundColor = color
+
+            navBar.titleTextAttributes = [.foregroundColor: UIColor.white]
+            navBar.tintColor = .white
+        }
+
         navigationItem.leftBarButtonItem = UIBarButtonItem(
-            barButtonSystemItem: .cancel,
+            image: UIImage(systemName: "chevron.backward"),
+            style: .plain,
             target: self,
             action: #selector(closeWebView)
         )
-
-        let color = UIColor(red: 60/255, green: 84/255, blue: 134/255, alpha: 1.0)
-        navigationController?.navigationBar.backgroundColor = color
     }
 
     private func setupWebView() {
