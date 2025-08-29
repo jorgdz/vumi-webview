@@ -79,24 +79,25 @@ class TelemedicineViewController: UIViewController {
 
     private func setupWebView() {
         let config = WKWebViewConfiguration()
-        
+        let userContentController = WKUserContentController()
+
         // Configurar preferencias
         let preferences = WKWebpagePreferences()
         preferences.allowsContentJavaScript = allowJavaScript
         config.defaultWebpagePreferences = preferences
 
-        //if let urlString = url, urlString.contains("air-dr") {
-            if let polyfillUrl = URL(string: "https://webrtc.github.io/adapter/adapter-latest.js"),
-            let polyfillSource = try? String(contentsOf: polyfillUrl) {
-                let polyfillScript = WKUserScript(
-                    source: polyfillSource,
-                    injectionTime: .atDocumentStart,
-                    forMainFrameOnly: false
-                )
-                config.userContentController.addUserScript(polyfillScript)
-            }
-        //}
+        if let scriptPath = Bundle(for: WebViewPluginPlugin.self).path(forResource: "adapter-latest", ofType: "js"),
+           let scriptSource = try? String(contentsOfFile: scriptPath, encoding: .utf8) {
 
+            let adapterScript = WKUserScript(
+                source: scriptSource,
+                injectionTime: .atDocumentStart,
+                forMainFrameOnly: false
+            )
+            userContentController.addUserScript(adapterScript)
+        }
+
+        config.userContentController = userContentController
 
         // Configurar para videollamadas (basado en Air Doctor)
         config.allowsInlineMediaPlayback = true
