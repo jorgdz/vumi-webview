@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.webkit.ConsoleMessage;
 import android.webkit.GeolocationPermissions;
@@ -68,7 +69,11 @@ public class TelemedicineActivity extends AppCompatActivity {
                 finish();
             }
         };
-        registerReceiver(closeReceiver, new IntentFilter("com.vumi.mobile.plugins.vumiwebview.CLOSE"));
+        if (Build.VERSION.SDK_INT >= 33) {
+            registerReceiver(closeReceiver, new IntentFilter("com.vumi.mobile.plugins.vumiwebview.CLOSE"), Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            registerReceiver(closeReceiver, new IntentFilter("com.vumi.mobile.plugins.vumiwebview.CLOSE"));
+        }
     }
 
     @SuppressLint("SetJavaScriptEnabled")
