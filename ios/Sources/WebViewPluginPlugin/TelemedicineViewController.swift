@@ -83,11 +83,6 @@ class TelemedicineViewController: UIViewController {
         } else {
             config.mediaPlaybackRequiresUserAction = false
         }
-        
-        // Configurar geolocalización
-        if allowGeolocation {
-            config.preferences.setValue(true, forKey: "allowFileAccessFromFileURLs")
-        }
 
         webView = WKWebView(frame: .zero, configuration: config)
         webView.translatesAutoresizingMaskIntoConstraints = false

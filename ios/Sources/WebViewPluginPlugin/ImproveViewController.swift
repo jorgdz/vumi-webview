@@ -102,23 +102,11 @@ class ImproveViewController: UIViewController {
 
         config.userContentController = userContentController
 
-        // Configurar para videollamadas (basado en Air Doctor)
+        // Configurar para videollamadas
         config.allowsInlineMediaPlayback = true
         config.allowsAirPlayForMediaPlayback = true
         config.mediaTypesRequiringUserActionForPlayback = allowMediaPlayback ? [] : .all
         config.allowsPictureInPictureMediaPlayback = true
-
-        // Habilitar permisos de media capture
-        if #available(iOS 14.3, *) {
-            config.preferences.setValue(true, forKey: "allowsInlineMediaPlayback")
-            config.preferences.setValue(true, forKey: "mediaDevicesEnabled")
-            config.preferences.setValue(true, forKey: "mockCaptureDevicesEnabled")
-        }
-
-        // Configurar geolocalización
-        if allowGeolocation {
-            config.preferences.setValue(true, forKey: "allowFileAccessFromFileURLs")
-        }
 
         // Obtener opciones adicionales de UserDefaults
         let allowZoom = UserDefaults.standard.bool(forKey: "VideoWebview_allowZoom")
