@@ -88,16 +88,17 @@ setWebviewOptions(options: WebviewOptions) => Promise<void>
 
 #### OpenVideoWebviewOptions
 
-| Prop                     | Type                                    | Description                                                             |
-| ------------------------ | --------------------------------------- | ----------------------------------------------------------------------- |
-| **`url`**                | <code>string</code>                     | URL a cargar en el WebView                                              |
-| **`userAgent`**          | <code>string</code>                     | User Agent personalizado (opcional)                                     |
-| **`headers`**            | <code>{ [key: string]: string; }</code> | Headers adicionales para la solicitud (opcional)                        |
-| **`allowJavaScript`**    | <code>boolean</code>                    | Permite JavaScript (por defecto: true)                                  |
-| **`allowGeolocation`**   | <code>boolean</code>                    | Permite geolocalización (por defecto: true)                             |
-| **`allowMediaPlayback`** | <code>boolean</code>                    | Permite reproducción de medios sin gesto de usuario (por defecto: true) |
-| **`debugEnabled`**       | <code>boolean</code>                    | Habilita depuración web (solo desarrollo)                               |
-| **`title`**              | <code>string</code>                     | Título de la barra de navegación (opcional)                             |
+| Prop                     | Type                                    | Description                                                                                |
+| ------------------------ | --------------------------------------- | ------------------------------------------------------------------------------------------ |
+| **`url`**                | <code>string</code>                     | URL a cargar en el WebView                                                                 |
+| **`userAgent`**          | <code>string</code>                     | User Agent personalizado (opcional)                                                        |
+| **`headers`**            | <code>{ [key: string]: string; }</code> | Headers adicionales para la solicitud (opcional)                                           |
+| **`allowJavaScript`**    | <code>boolean</code>                    | Permite JavaScript (por defecto: true)                                                     |
+| **`allowGeolocation`**   | <code>boolean</code>                    | Permite geolocalización (por defecto: true)                                                |
+| **`allowMediaPlayback`** | <code>boolean</code>                    | Permite reproducción de medios sin gesto de usuario (por defecto: true)                    |
+| **`debugEnabled`**       | <code>boolean</code>                    | Habilita depuración web (solo desarrollo)                                                  |
+| **`title`**              | <code>string</code>                     | Título de la barra de navegación (opcional)                                                |
+| **`selectPlugin`**       | <code>string</code>                     | Seleccionador de plugin (opcional): Permite cambiar la implementación del plugin (A, B, C) |
 
 
 #### PermissionStatus

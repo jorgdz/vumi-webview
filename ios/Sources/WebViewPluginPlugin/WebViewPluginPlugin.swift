@@ -22,64 +22,123 @@ public class WebViewPluginPlugin: CAPPlugin, CAPBridgedPlugin {
             return
         }
 
-        DispatchQueue.main.async {
-            let userAgent = call.getString("userAgent")
-            let allowJavaScript = call.getBool("allowJavaScript", true)
-            let allowGeolocation = call.getBool("allowGeolocation", true)
-            let allowMediaPlayback = call.getBool("allowMediaPlayback", true)
-            let debugEnabled = call.getBool("debugEnabled", false)
-            let selectPlugin = call.getString("selectPlugin") ?? "A"
-            let title = call.getString("title") ?? "Video WebView"
+        checkAndRequestPermissions { [weak self] granted in
+            guard let self = self else { return }
 
-            let videoWebViewController: UIViewController
-
-            switch selectPlugin {
-            case "A":
-                let controller = TelemedicineViewController()
-                controller.configure(
-                    url: url,
-                    userAgent: userAgent,
-                    allowJavaScript: allowJavaScript,
-                    allowGeolocation: allowGeolocation,
-                    allowMediaPlayback: allowMediaPlayback,
-                    debugEnabled: debugEnabled,
-                    title: "\(title) (Plugin: \(selectPlugin))"
-                )
-                videoWebViewController = controller
-
-            case "B":
-                let controller = BasicViewController()
-                controller.configure(
-                    url: url,
-                    userAgent: userAgent,
-                    allowJavaScript: allowJavaScript,
-                    allowGeolocation: allowGeolocation,
-                    allowMediaPlayback: allowMediaPlayback,
-                    debugEnabled: debugEnabled,
-                    title: "\(title) (Plugin: \(selectPlugin))"
-                )
-                videoWebViewController = controller
-
-            default:
-                let controller = TelemedicineViewController()
-                controller.configure(
-                    url: url,
-                    userAgent: userAgent,
-                    allowJavaScript: allowJavaScript,
-                    allowGeolocation: allowGeolocation,
-                    allowMediaPlayback: allowMediaPlayback,
-                    debugEnabled: debugEnabled,
-                    title: "\(title) (Plugin: \(selectPlugin))"
-                )
-                videoWebViewController = controller
+            if !granted {
+                call.reject("Permisos de cámara y micrófono son necesarios para videollamadas")
+                return
             }
 
-            let navigationController = UINavigationController(rootViewController: videoWebViewController)
-            navigationController.modalPresentationStyle = .fullScreen
-            self.webViewNavigationController = navigationController
+            DispatchQueue.main.async {
+                let userAgent = call.getString("userAgent")
+                let allowJavaScript = call.getBool("allowJavaScript", true)
+                let allowGeolocation = call.getBool("allowGeolocation", true)
+                let allowMediaPlayback = call.getBool("allowMediaPlayback", true)
+                let debugEnabled = call.getBool("debugEnabled", false)
+                let selectPlugin = call.getString("selectPlugin") ?? "A"
+                let title = call.getString("title") ?? "Video WebView"
 
-            self.bridge?.viewController?.present(navigationController, animated: true)
-            call.resolve()
+                let videoWebViewController: UIViewController
+
+                switch selectPlugin {
+                case "A":
+                    let controller = TelemedicineViewController()
+                    controller.configure(
+                        url: url,
+                        userAgent: userAgent,
+                        allowJavaScript: allowJavaScript,
+                        allowGeolocation: allowGeolocation,
+                        allowMediaPlayback: allowMediaPlayback,
+                        debugEnabled: debugEnabled,
+                        title: "\(title) (Plugin: \(selectPlugin))"
+                    )
+                    videoWebViewController = controller
+
+                case "B":
+                    let controller = BasicViewController()
+                    controller.configure(
+                        url: url,
+                        userAgent: userAgent,
+                        allowJavaScript: allowJavaScript,
+                        allowGeolocation: allowGeolocation,
+                        allowMediaPlayback: allowMediaPlayback,
+                        debugEnabled: debugEnabled,
+                        title: "\(title) (Plugin: \(selectPlugin))"
+                    )
+                    videoWebViewController = controller
+                
+                case "C":
+                    let controller = ImproveViewController()
+                    controller.configure(
+                        url: url,
+                        userAgent: userAgent,
+                        allowJavaScript: allowJavaScript,
+                        allowGeolocation: allowGeolocation,
+                        allowMediaPlayback: allowMediaPlayback,
+                        debugEnabled: debugEnabled,
+                        title: "\(title) (Plugin: \(selectPlugin))"
+                    )
+                    videoWebViewController = controller
+
+                default:
+                    let controller = TelemedicineViewController()
+                    controller.configure(
+                        url: url,
+                        userAgent: userAgent,
+                        allowJavaScript: allowJavaScript,
+                        allowGeolocation: allowGeolocation,
+                        allowMediaPlayback: allowMediaPlayback,
+                        debugEnabled: debugEnabled,
+                        title: "\(title) (Plugin: \(selectPlugin))"
+                    )
+                    videoWebViewController = controller
+                }
+
+                let navigationController = UINavigationController(rootViewController: videoWebViewController)
+                navigationController.modalPresentationStyle = .fullScreen
+                self.webViewNavigationController = navigationController
+
+                self.bridge?.viewController?.present(navigationController, animated: true)
+                call.resolve()
+            }
+        }
+    }
+
+    private func checkAndRequestPermissions(completion: @escaping (Bool) -> Void) {
+        let cameraStatus = AVCaptureDevice.authorizationStatus(for: .video)
+        let microphoneStatus = AVCaptureDevice.authorizationStatus(for: .audio)
+
+        // Si ambos están autorizados, continuar
+        if cameraStatus == .authorized && microphoneStatus == .authorized {
+            completion(true)
+            return
+        }
+
+        let group = DispatchGroup()
+        var cameraGranted = cameraStatus == .authorized
+        var microphoneGranted = microphoneStatus == .authorized
+
+        // Solicitar permiso de cámara si es necesario
+        if cameraStatus == .notDetermined {
+            group.enter()
+            AVCaptureDevice.requestAccess(for: .video) { granted in
+                cameraGranted = granted
+                group.leave()
+            }
+        }
+
+        // Solicitar permiso de micrófono si es necesario
+        if microphoneStatus == .notDetermined {
+            group.enter()
+            AVCaptureDevice.requestAccess(for: .audio) { granted in
+                microphoneGranted = granted
+                group.leave()
+            }
+        }
+
+        group.notify(queue: .main) {
+            completion(cameraGranted && microphoneGranted)
         }
     }
 
