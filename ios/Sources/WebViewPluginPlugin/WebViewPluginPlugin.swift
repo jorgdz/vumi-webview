@@ -28,18 +28,51 @@ public class WebViewPluginPlugin: CAPPlugin, CAPBridgedPlugin {
             let allowGeolocation = call.getBool("allowGeolocation", true)
             let allowMediaPlayback = call.getBool("allowMediaPlayback", true)
             let debugEnabled = call.getBool("debugEnabled", false)
+            let selectPlugin = call.getString("selectPlugin") ?? "A"
             let title = call.getString("title") ?? "Video WebView"
-           
-            let videoWebViewController = TelemedicineViewController()
-            videoWebViewController.configure(
-                url: url,
-                userAgent: userAgent,
-                allowJavaScript: allowJavaScript,
-                allowGeolocation: allowGeolocation,
-                allowMediaPlayback: allowMediaPlayback,
-                debugEnabled: debugEnabled,
-                title: title
-            )
+
+            let videoWebViewController: UIViewController
+
+            switch selectPlugin {
+            case "A":
+                let controller = TelemedicineViewController()
+                controller.configure(
+                    url: url,
+                    userAgent: userAgent,
+                    allowJavaScript: allowJavaScript,
+                    allowGeolocation: allowGeolocation,
+                    allowMediaPlayback: allowMediaPlayback,
+                    debugEnabled: debugEnabled,
+                    title: "\(title) (Plugin: \(selectPlugin))"
+                )
+                videoWebViewController = controller
+
+            case "B":
+                let controller = BasicViewController()
+                controller.configure(
+                    url: url,
+                    userAgent: userAgent,
+                    allowJavaScript: allowJavaScript,
+                    allowGeolocation: allowGeolocation,
+                    allowMediaPlayback: allowMediaPlayback,
+                    debugEnabled: debugEnabled,
+                    title: "\(title) (Plugin: \(selectPlugin))"
+                )
+                videoWebViewController = controller
+
+            default:
+                let controller = TelemedicineViewController()
+                controller.configure(
+                    url: url,
+                    userAgent: userAgent,
+                    allowJavaScript: allowJavaScript,
+                    allowGeolocation: allowGeolocation,
+                    allowMediaPlayback: allowMediaPlayback,
+                    debugEnabled: debugEnabled,
+                    title: "\(title) (Plugin: \(selectPlugin))"
+                )
+                videoWebViewController = controller
+            }
 
             let navigationController = UINavigationController(rootViewController: videoWebViewController)
             navigationController.modalPresentationStyle = .fullScreen

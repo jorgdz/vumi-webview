@@ -47,6 +47,11 @@ export interface OpenVideoWebviewOptions {
    * Título de la barra de navegación (opcional)
    */
   title?: string;
+
+  /**
+   * Seleccionador de plugin (opcional): Permite cambiar la implementación del plugin (A, B, C)
+   */
+  selectPlugin?: string;
 }
 
 export interface WebviewOptions {

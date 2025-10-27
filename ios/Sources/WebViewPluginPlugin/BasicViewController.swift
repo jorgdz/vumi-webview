@@ -2,7 +2,7 @@ import Foundation
 import WebKit
 import UIKit
 
-class TelemedicineViewController: UIViewController {
+class BasicViewController: UIViewController, WKUIDelegate, WKNavigationDelegate {
 
     private var webView: WKWebView!
     private var url: String?
@@ -72,17 +72,18 @@ class TelemedicineViewController: UIViewController {
         let preferences = WKWebpagePreferences()
         preferences.allowsContentJavaScript = allowJavaScript
         config.defaultWebpagePreferences = preferences
+        
+        if #available(iOS 10.0, *) {
+            config.mediaTypesRequiringUserActionForPlayback = allowMediaPlayback ? [] : .all
+        } else {
+            config.mediaPlaybackRequiresUserAction = false
+        }
 
         // Configurar para videollamadas (basado en Air Doctor)
         config.allowsInlineMediaPlayback = true
         config.allowsAirPlayForMediaPlayback = true
         config.websiteDataStore = WKWebsiteDataStore.default()
 
-        if #available(iOS 10.0, *) {
-            config.mediaTypesRequiringUserActionForPlayback = allowMediaPlayback ? [] : .all
-        } else {
-            config.mediaPlaybackRequiresUserAction = false
-        }
         
         // Configurar geolocalización
         if allowGeolocation {
@@ -120,78 +121,5 @@ class TelemedicineViewController: UIViewController {
 
     @objc private func closeWebView() {
         dismiss(animated: true)
-    }
-}
-
-// MARK: - WKNavigationDelegate
-extension TelemedicineViewController: WKNavigationDelegate {
-    public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-        guard let url = navigationAction.request.url else {
-            decisionHandler(.allow)
-            return
-        }
-
-        // Manejar esquemas especiales
-        let scheme = url.scheme?.lowercased()
-        if scheme == "tel" || scheme == "mailto" || scheme == "whatsapp" {
-            if UIApplication.shared.canOpenURL(url) {
-                UIApplication.shared.open(url)
-                decisionHandler(.cancel)
-                return
-            }
-        }
-
-        decisionHandler(.allow)
-    }
-}
-
-// MARK: - WKUIDelegate
-extension TelemedicineViewController: WKUIDelegate {
-    @available(iOS 15.0, *)
-    public func webView(_ webView: WKWebView, requestMediaCapturePermissionFor origin: WKSecurityOrigin, initiatedByFrame frame: WKFrameInfo, type: WKMediaCaptureType, decisionHandler: @escaping (WKPermissionDecision) -> Void) {
-        // Otorgar permisos automáticamente si la app tiene los permisos del sistema
-        decisionHandler(.grant)
-    }
-
-    // Fallback para iOS 13-14
-    public func webView(_ webView: WKWebView, runJavaScriptTextInputPanelWithPrompt prompt: String, defaultText: String?, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (String?) -> Void) {
-        let alert = UIAlertController(title: nil, message: prompt, preferredStyle: .alert)
-
-        alert.addTextField { textField in
-            textField.text = defaultText
-        }
-
-        alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
-            completionHandler(alert.textFields?.first?.text)
-        })
-
-        alert.addAction(UIAlertAction(title: "Cancelar", style: .cancel) { _ in
-            completionHandler(nil)
-        })
-        present(alert, animated: true)
-    }
-
-    @available(iOS 15.0, *)
-    public func webView(_ webView: WKWebView, requestDeviceOrientationAndMotionPermissionFor origin: WKSecurityOrigin, initiatedByFrame frame: WKFrameInfo, decisionHandler: @escaping (WKPermissionDecision) -> Void) {
-        decisionHandler(.grant)
-    }
-
-    public func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
-        let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
-            completionHandler()
-        })
-        present(alert, animated: true)
-    }
-
-    public func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Void) {
-        let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
-            completionHandler(true)
-        })
-        alert.addAction(UIAlertAction(title: "Cancelar", style: .cancel) { _ in
-            completionHandler(false)
-        })
-        present(alert, animated: true)
     }
 }
