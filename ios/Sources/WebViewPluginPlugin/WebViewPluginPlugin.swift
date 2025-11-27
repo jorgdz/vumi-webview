@@ -51,7 +51,7 @@ public class WebViewPluginPlugin: CAPPlugin, CAPBridgedPlugin {
                         allowGeolocation: allowGeolocation,
                         allowMediaPlayback: allowMediaPlayback,
                         debugEnabled: debugEnabled,
-                        title: "\(title) (Plugin: \(selectPlugin))"
+                        title: title
                     )
                     videoWebViewController = controller
 
@@ -64,7 +64,7 @@ public class WebViewPluginPlugin: CAPPlugin, CAPBridgedPlugin {
                         allowGeolocation: allowGeolocation,
                         allowMediaPlayback: allowMediaPlayback,
                         debugEnabled: debugEnabled,
-                        title: "\(title) (Plugin: \(selectPlugin))"
+                        title: title
                     )
                     videoWebViewController = controller
                 
@@ -77,7 +77,7 @@ public class WebViewPluginPlugin: CAPPlugin, CAPBridgedPlugin {
                         allowGeolocation: allowGeolocation,
                         allowMediaPlayback: allowMediaPlayback,
                         debugEnabled: debugEnabled,
-                        title: "\(title) (Plugin: \(selectPlugin))"
+                        title: title
                     )
                     videoWebViewController = controller
 
@@ -90,7 +90,7 @@ public class WebViewPluginPlugin: CAPPlugin, CAPBridgedPlugin {
                         allowGeolocation: allowGeolocation,
                         allowMediaPlayback: allowMediaPlayback,
                         debugEnabled: debugEnabled,
-                        title: "\(title) (Plugin: \(selectPlugin))"
+                        title: title
                     )
                     videoWebViewController = controller
                 }
